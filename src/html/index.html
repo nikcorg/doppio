@@ -1,0 +1,32 @@
+<html><!-- manifest="/doppio.appcache">-->
+<head>
+    <meta charset="utf-8" />
+    <title>Doppio-kerho</title>
+    <link rel="stylesheet" href="/style-__VERSION__.css" />
+    <script src="/bundle-__VERSION__.js"></script>
+</head>
+<body>
+    <h1>Doppio!</h1>
+    <main>
+        <p>The application is starting...</p>
+    </main>
+
+    <script>
+        function confirmReload() {
+            confirm("The application has updated, do you want to update now?");
+        }
+
+        function onAppCacheUpdateReady(evt) {
+            if (window.applicationCache.status === window.applicationCache.UPDATEREADY && confirmReload()) {
+                window.location.reload();
+            }
+        }
+
+        function onWinLoad(evt) {
+            window.applicationCache.addEventListener("updateready", onAppCacheUpdateReady, false);
+        }
+
+        window.addEventListener("load", onWinLoad, false);
+    </script>
+</body>
+</html>
