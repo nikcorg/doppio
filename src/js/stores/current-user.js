@@ -15,7 +15,22 @@ class CurrentUserStore {
             resetCurrent: CurrentUserActions.resetCurrent
         });
 
+        this.exportPublicMethods({
+            getCurrentUser: this.getCurrentUser
+        });
+
         this.currentUser = null;
+    }
+
+    getCurrentUser() {
+        const currentUser = this.getState().currentUser;
+        const persons = PersonStore.getState().persons;
+
+        if (null == currentUser || null == persons[currentUser]) {
+            throw new Error("User not logged in or unknown person");
+        }
+
+        return persons[currentUser];
     }
 
     setCurrent({ email }) {
