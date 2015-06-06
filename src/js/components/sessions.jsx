@@ -9,7 +9,7 @@ export class Sessions extends React.Component {
         this.state = this.store.getState();
     }
 
-    componenDidMount() {
+    componentDidMount() {
         function updateState() {
             this.setState(this.store.getState());
         }
