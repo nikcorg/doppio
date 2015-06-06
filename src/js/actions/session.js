@@ -8,6 +8,9 @@ class SessionActions {
     fetchSessions() {
         let updateSessions = this.actions.updateSessions;
 
+        // Dispatch right away to set fetching state
+        this.dispatch();
+
         fetch("/api/sessions").
         then(function (res) {
             if (200 !== res.status) {
@@ -21,6 +24,10 @@ class SessionActions {
         }).
         catch(function (err) {
             log("error fetching sessions", err.stack || err.message);
+
+            // How should the error (or should it?) be communicated to the app
+            // state? Perhaps a possibly-out-of-sync state is needed
+            updateSessions({});
         });
     }
 

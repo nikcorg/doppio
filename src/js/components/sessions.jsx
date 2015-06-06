@@ -31,10 +31,13 @@ export class Sessions extends React.Component {
     }
 
     render() {
+        if (this.state.fetching) {
+            return <div><p>Syncing, please hold...</p></div>;
+        }
+
         return (
             <div>
                 <ul>{this.getSessionsAsListItems()}</ul>
-
                 <button>create session</button>
             </div>
         );
