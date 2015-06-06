@@ -2,7 +2,7 @@
 import debug from "debug";
 import React from "react";
 
-import { AppView } from "./views/app";
+import App from "./components/app";
 
 import { alt } from "./alt";
 
@@ -45,5 +45,5 @@ export function start() {
     // Fetch state for sessions currently accepting joins
     alt.getActions("SessionActions").fetchSessions();
 
-    React.render(React.createElement(AppView, null), document.querySelector("main"));
+    React.render(React.createElement(App, null), document.querySelector("main"));
 }
