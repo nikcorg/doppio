@@ -36,10 +36,17 @@ class SessionActions {
     }
 
     createSession({ email }) {
-        // unique id for session is required
+        const sync = "pending";
 
+        // A unique id for session is required. As we can probably create that
+        // realiably in the client with a prefix (email is a unique property)
+        // we don't need to wait for the server to sync. But we need to keep
+        // track of whether the session is eventually synced, as otherwise it
+        // will be client-local and thus useless
 
-        this.dispatch({ email });
+        this.dispatch({ email, sync });
+
+        // TODO: start server-sync (?)
     }
 
     joinSession({ id, email }) {
