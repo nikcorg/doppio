@@ -9,17 +9,30 @@ class SessionStore {
     constructor() {
         this.bindListeners({
             createSession: SessionActions.createSession,
-            joinSession: SessionActions.joinSession
+            joinSession: SessionActions.joinSession,
+            fetchSessions: SessionActions.fetchSessions,
+            updateSessions: SessionActions.updateSessions
         });
 
+        this.fetching = false;
         this.sessions = {};
     }
 
-    createSession({ email }) {
+    fetchSessions() {
+        this.fetching = true;
+    }
+
+    updateSessions(sessions) {
+        this.fetching = false;
+        this.setState({ sessions: sessions });
+    }
+
+    createSession({ email, sync }) {
         const sessions = this.sessions;
         let id = Date.now() + "-" + Math.round(Math.random() * 9999);
 
         sessions[id] = {
+            sync,
             createdBy: email,
             participants: [email],
             payer: null,
