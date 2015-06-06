@@ -21,13 +21,33 @@ export class Sessions extends React.Component {
         this.unlisten();
     }
 
+    onJoinSession(id) {
+        const sessions = this.store.getState().sessions;
+        const session = sessions.filter(s => s.id === id).shift();
+
+        if (null == session) {
+            throw new Error("Invalid session id");
+        }
+    }
+
+    onCreateSession() {
+        const currentUser = alt.getStore("CurrentUser").getCurrentUser();
+        const createSession = alt.getActions("SessionActions").createSession;
+
+        createSession(currentUser);
+    }
+
     getSessionsAsListItems() {
         const sessions = this.state.sessions;
 
         return Object.keys(sessions).
             map(k => sessions[k]).
             filter(s => s.isOpen).
-            map(s => <li key="s.id">{s.createdBy} <button>join this session</button></li>);
+            map((s, idx) => <li key={s.createdBy + "-" + idx} className={"sync-" + s.sync}>
+                {s.createdBy}
+                <button onClick={this.onJoinSession.bind(this, s.id)}>join this session</button>
+                </li>
+            );
     }
 
     render() {
@@ -36,9 +56,9 @@ export class Sessions extends React.Component {
         }
 
         return (
-            <div>
+            <div className="sessions">
                 <ul>{this.getSessionsAsListItems()}</ul>
-                <button>create session</button>
+                <button onClick={this.onCreateSession.bind(this)}>create session</button>
             </div>
         );
     }
