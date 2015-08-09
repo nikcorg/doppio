@@ -2,48 +2,37 @@
 import debug from "debug";
 import React from "react";
 
-import App from "./components/app";
-
-import { alt } from "./alt";
-
-import "./stores/person";
-import "./stores/session";
-import "./stores/current-user";
+import { RootComponent } from "./components/root";
+import { getStore } from "./stores/doppio";
 
 const log = debug("doppio:app");
+const LS_KEY = "LS_DOPPIO";
 
-function bootstrapStores() {
-    const storesData = localStorage.getItem("__stores");
+function createStore(f) {
+    const snapshot = JSON.parse(localStorage.getItem(LS_KEY));
 
-    if (null != storesData) {
-        log("boostrapping stores", storesData);
-        alt.bootstrap(storesData);
+    if (null != snapshot) {
+        log("restore snapshot");
+        return f(snapshot);
     }
+
+    log("clean boot");
+    return f();
 }
 
-function serializeStores() {
-    const snapshot = alt.takeSnapshot();
-
-    clearTimeout(serializeStores.__timer);
-
-    serializeStores.__timer = setTimeout(function () {
-        log("storing snapshot", typeof snapshot, snapshot);
-        localStorage.setItem("__stores", snapshot);
-    }, 200);
+function serializeStore(state) {
+    const snapshot = JSON.stringify(state);
+    localStorage.setItem(LS_KEY, snapshot);
+    log("stored snapshot");
 }
 
 export function start() {
     log("starting");
 
-    bootstrapStores();
+    let doppio = createStore(getStore);
+    let unsub = doppio.subscribe(() => serializeStore(doppio.getState()));
 
-    // Bind serializer for all changes to stores
-    Object.keys(alt.stores).
-        map(alt.getStore.bind(alt)).
-        forEach(store => store.listen(serializeStores));
+    log("first render");
 
-    // Fetch state for sessions currently accepting joins
-    alt.getActions("SessionActions").fetchSessions();
-
-    React.render(React.createElement(App, null), document.querySelector("main"));
+    React.render(React.createElement(RootComponent, { store: doppio }), document.querySelector("main"));
 }

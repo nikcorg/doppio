@@ -1,65 +1,48 @@
-import React from "react";
-import { alt } from "../alt";
+import debug from "debug";
+import React, { Component, PropTypes } from "react";
 
-export class Sessions extends React.Component {
+const log = debug("doppio:components:sessions");
+
+export class Sessions extends Component {
     constructor(props) {
         super(props);
-
-        this.store = alt.getStore("SessionStore");
-        this.state = this.store.getState();
-    }
-
-    componentDidMount() {
-        function updateState() {
-            this.setState(this.store.getState());
-        }
-
-        this.unlisten = this.store.listen(updateState.bind(this));
-    }
-
-    componentWillUnount() {
-        this.unlisten();
-    }
-
-    onJoinSession(id) {
-        const sessions = this.store.getState().sessions;
-        const session = sessions.filter(s => s.id === id).shift();
-
-        if (null == session) {
-            throw new Error("Invalid session id");
-        }
-    }
-
-    onCreateSession() {
-        const currentUser = alt.getStore("CurrentUser").getCurrentUser();
-        const createSession = alt.getActions("SessionActions").createSession;
-
-        createSession(currentUser);
     }
 
     getSessionsAsListItems() {
-        const sessions = this.state.sessions;
+        const sessions = this.props.sessions;
 
         return Object.keys(sessions).
             map(k => sessions[k]).
-            filter(s => s.isOpen).
-            map((s, idx) => <li key={s.createdBy + "-" + idx} className={"sync-" + s.sync}>
-                {s.createdBy}
-                <button onClick={this.onJoinSession.bind(this, s.id)}>join this session</button>
+            filter(s => null == s.outchecker).
+            map((s, idx) => <li key={s.host.name + "-" + idx}>
+                {s.members.map(m => m.name).join(", ")} (Hosted by {s.host.name})
+                <button onClick={this.props.onJoinSession.bind(this, s.host)}>join this session</button>
                 </li>
             );
     }
 
     render() {
-        if (this.state.fetching) {
-            return <div><p>Syncing, please hold...</p></div>;
-        }
+        log("props", this.props);
 
         return (
             <div className="sessions">
                 <ul>{this.getSessionsAsListItems()}</ul>
-                <button onClick={this.onCreateSession.bind(this)}>create session</button>
+                <button onClick={this.props.onCreateSession}>host session</button>
             </div>
         );
     }
 }
+
+Sessions.propTypes = {
+    onCreateSession: PropTypes.func.isRequired,
+    onJoinSession: PropTypes.func.isRequired,
+    sessions: PropTypes.arrayOf(PropTypes.shape({
+        host: PropTypes.shape({
+            email: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired
+        }).isRequired,
+        members: PropTypes.arrayOf(PropTypes.shape({
+            name: PropTypes.string.isRequired
+        }))
+    })).isRequired
+};

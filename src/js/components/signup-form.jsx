@@ -1,48 +1,32 @@
 import debug from "debug";
-import React from "react";
-import { alt } from "../alt";
+import React, { Component, PropTypes } from "react";
 
-const log = debug("doppio:signup-form");
+const log = debug("doppio:components:signup-form");
 
-export class SignupForm extends React.Component {
+export class SignupForm extends Component {
     constructor(props) {
         super(props);
-        this.state = { email: "" };
-    }
-
-    onComponentWillMount() {
-        this.unlisten = alt.getStore("PersonStore").listen(_ => log("store event", _));
-    }
-
-    onComponentWillUnmount() {
-        this.unlisten();
     }
 
     onFormSubmitted(evt) {
-        const { updatePerson } = alt.getActions("PersonActions");
-
         evt.preventDefault();
 
         log("form submitted", this.state);
 
-        try {
-            updatePerson(this.state);
-
-            const current = alt.getStore("PersonStore").getState().persons[this.state.email];
-
-            alt.getActions("CurrentUserActions").setCurrent(current);
-        } catch (err) {
-            debug("update failed", err);
-        }
+        this.props.onSubmit(this.state);
     }
 
     onEmailChanged(evt) {
         this.setState({ email: evt.target.value });
+    }
 
-        log("email changed", evt.target.value);
+    onNameChanged(evt) {
+        this.setState({ name: evt.target.value });
     }
 
     render() {
+        log("props", this.props);
+
         return (
             <form action="/sign-up" method="post" onSubmit={this.onFormSubmitted.bind(this)}>
                 <p>Sign up with your e-mail.</p>
@@ -56,8 +40,22 @@ export class SignupForm extends React.Component {
                     autoFocus
                     required
                 /></label></p>
+
+                <p><label><span>Your name</span>
+                <input
+                    ref="name"
+                    onChange={this.onNameChanged.bind(this)}
+                    type="text"
+                    name="text"
+                    placeholder="John Doe"
+                    required
+                /></label></p>
                 <p><button type="submit">Sign up!</button></p>
             </form>
         );
     }
 }
+
+SignupForm.propTypes = {
+    onSubmit: PropTypes.func.isRequired
+};
