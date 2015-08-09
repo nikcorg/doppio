@@ -1,24 +1,11 @@
-import React from "react";
-import { alt } from "../alt";
+import debug from "debug";
+import React, { Component } from "react";
 
-export class Persons extends React.Component {
+const log = debug("doppio:components:persons");
+
+export class Persons extends Component {
     constructor(props) {
         super(props);
-
-        this.store = alt.getStore("PersonStore");
-        this.state = this.store.getState();
-    }
-
-    storeDidUpdate() {
-        this.setState(this.store.getState());
-    }
-
-    componentDidMount() {
-        this.unlisten = this.store.listen(this.storeDidUpdate.bind(this));
-    }
-
-    componentWillUnmount() {
-        this.unlisten();
     }
 
     getPersonsListItems() {
@@ -29,6 +16,8 @@ export class Persons extends React.Component {
     }
 
     render() {
+        log("props", this.props);
+
         return <ul>{this.getPersonsListItems()}</ul>;
     }
 }

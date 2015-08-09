@@ -1,25 +1,34 @@
-import React from "react";
-import { alt } from "../alt";
+import debug from "debug";
+import React, { Component, PropTypes } from "react";
 
-export class Home extends React.Component {
+const log = debug("doppio:components:home");
+
+export class Home extends Component {
     signOut(evt) {
         evt.preventDefault();
         evt.stopPropagation();
-
-        alt.getActions("CurrentUserActions").resetCurrent();
     }
 
     render() {
-        const currentUser = alt.getStore("CurrentUser").getState().currentUser;
-        const persons = alt.getStore("PersonStore").getState().persons;
-        const balance = persons[currentUser].balance;
+        const currentUser = this.props.currentUser;
+
+        log("props", this.props);
 
         return (
             <div>
-                <p>Welcome back, {currentUser}!</p>
-                <p>Your current balance is {balance}</p>
-                <p><button type="button" onClick={this.signOut.bind(this)}>Log out</button></p>
+                <p>Welcome back, {currentUser.name}!</p>
+                <p>Your current balance is {currentUser.balance}</p>
+                <p><button type="button" onClick={this.props.onSignOut}>Log out</button></p>
             </div>
         );
     }
 }
+
+Home.propTypes = {
+    currentUser: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        balance: PropTypes.number.isRequired,
+        email: PropTypes.string
+    }).isRequired,
+    onSignOut: PropTypes.func.isRequired
+};

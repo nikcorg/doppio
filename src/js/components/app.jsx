@@ -1,55 +1,62 @@
-import React from "react";
-
-import { alt } from "../alt";
+import debug from "debug";
+import React, { Component } from "react";
+import { connect } from "react-redux";
 import { SignupForm } from "./signup-form";
 import { Home } from "./home";
-import { Persons } from "./persons";
+// import { Persons } from "./persons";
 import { Sessions } from "./sessions";
 
-export class AppView extends React.Component {
+import { createProfile, clearProfile } from "../actions/ProfileActions";
+import { createSession, joinSession } from "../actions/SessionActions";
+
+const log = debug("doppio:components:app");
+
+class AppView extends Component {
     constructor(props) {
         super(props);
-        this.store = alt.getStore("CurrentUser");
-        this.state = this.store.getState();
-    }
-
-    componentDidMount() {
-        function updateState() {
-            this.setState(this.store.getState());
-        }
-
-        this.unlisten = this.store.listen(updateState.bind(this));
-    }
-
-    componentWillUnmount() {
-        this.unlisten();
     }
 
     anonymousView() {
-        return <SignupForm/>;
+        let dispatch = this.props.dispatch;
+        return <SignupForm onSubmit={s => dispatch(createProfile(s))} />;
     }
 
     signedInView() {
+        let { dispatch, profile } = this.props;
+
+        function dispatchCP() {
+            log("clear profile");
+            dispatch(clearProfile());
+        }
+
         return (
             <div>
-            <Home/>
+            <Home currentUser={this.props.profile} onSignOut={dispatchCP}/>
 
             <hr />
                 <h2>Sessions</h2>
-                <Sessions />
-            <hr />
-                <h2>Persons</h2>
-                <Persons />
+                <Sessions
+                    sessions={this.props.sessions}
+                    onJoinSession={(h) => dispatch(joinSession(h, profile))}
+                    onCreateSession={() => dispatch(createSession(profile))}
+                />
+
             </div>
         );
     }
 
     render() {
-        const state = this.state;
-        const isUserKnown = null != state.currentUser;
+        log("props", this.props);
+
+        const { profile } = this.props;
+        const isUserKnown = null != profile;
 
         return isUserKnown ? this.signedInView() : this.anonymousView();
     }
 }
 
-export default AppView;
+function select(state) {
+    return state;
+}
+
+export default connect(select)(AppView);
