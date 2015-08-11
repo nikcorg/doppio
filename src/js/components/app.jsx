@@ -27,7 +27,7 @@ class AppView extends Component {
                 {
                     this.props.profiles.map(p => {
                         return (
-                            <li id={p.id}>
+                            <li key={p.id}>
                                 <button onClick={() => dispatch(signIn(p))}>Sign in as <b>{p.name}</b></button>
                             </li>
                         );
