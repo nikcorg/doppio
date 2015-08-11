@@ -16,5 +16,5 @@ let initialState = {
 let doppioApp = combineReducers({ sessions, profiles, currentUser });
 
 export function getStore(state = initialState) {
-    return applyMiddleware(logger)(createStore)(doppioApp, state);
+    return applyMiddleware(logger, apiCall)(createStore)(doppioApp, state);
 }
