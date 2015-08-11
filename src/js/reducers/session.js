@@ -1,4 +1,7 @@
+import debug from "debug";
 import * as types from "../constants/ActionTypes";
+
+const log = debug("doppio:reducers:session");
 
 export function sessions(state = [], action) {
     switch (action.type) {

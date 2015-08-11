@@ -1,4 +1,7 @@
+import debug from "debug";
 import * as types from "../constants/ActionTypes";
+
+const log = debug("doppio:reducers:profile");
 
 export function profile(state = null, action) {
     switch (action.type) {
