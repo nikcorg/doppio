@@ -45,6 +45,9 @@
         "no-unexpected-multiline": 1,
         "no-unused-vars": 1,
         "no-var": 1,
+        "no-warning-comments": [1, {
+          "terms": ["todo", "fixme"], "location": "anywhere"
+        }],
         "object-curly-spacing": [1, "always"],
         "prefer-spread": 1,
         "quotes": [1, "double"],
