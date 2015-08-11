@@ -3,7 +3,7 @@ import debug from "debug";
 import React from "react";
 
 import { RootComponent } from "./components/root";
-import { getStore } from "./stores/doppio";
+import { getDoppioStore } from "./stores";
 
 const log = debug("doppio:app");
 const LS_KEY = "LS_DOPPIO";
@@ -29,7 +29,7 @@ function serializeStore(state) {
 export function start() {
     log("starting");
 
-    let doppio = createStore(getStore);
+    let doppio = createStore(getDoppioStore);
     let unsub = doppio.subscribe(() => serializeStore(doppio.getState()));
 
     log("first render");

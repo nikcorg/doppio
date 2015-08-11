@@ -5,8 +5,10 @@ const log = debug("doppio:reducers:profiles");
 
 export function profiles(state = [], action) {
     switch (action.type) {
-    case types.CREATE_PROFILE:
-        return [...state, { id: action.id, name: action.name, email: action.email, balance: action.balance }];
+    case types.CREATE_PROFILE_SUCCESS:
+        let payload = action.payload;
+        log("profile created successfully", payload);
+        return [...state, { id: payload.id, name: payload.name, email: payload.email, balance: payload.balance }];
     default:
         return state;
     }
