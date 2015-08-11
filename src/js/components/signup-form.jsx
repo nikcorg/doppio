@@ -6,6 +6,8 @@ const log = debug("doppio:components:signup-form");
 export class SignupForm extends Component {
     constructor(props) {
         super(props);
+
+        log("props=", props);
     }
 
     onFormSubmitted(evt) {
@@ -25,8 +27,6 @@ export class SignupForm extends Component {
     }
 
     render() {
-        log("props", this.props);
-
         return (
             <form action="/sign-up" method="post" onSubmit={this.onFormSubmitted.bind(this)}>
                 <p>Sign up with your e-mail.</p>

@@ -1,13 +1,14 @@
 import debug from "debug";
 import * as types from "../constants/action-types";
 
-const log = debug("doppio:reducers:profile");
+const log = debug("doppio:reducers:current-user");
 
-export function profile(state = null, action) {
+export function currentUser(state = null, action) {
     switch (action.type) {
+    case types.SIGN_IN:
     case types.CREATE_PROFILE:
-        return { name: action.name, email: action.email, balance: 0 };
-    case types.CLEAR_PROFILE:
+        return { id: action.id };
+    case types.SIGN_OUT:
         return null;
     default:
         return state;

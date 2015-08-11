@@ -6,8 +6,9 @@ import { Home } from "./home";
 // import { Persons } from "./persons";
 import { Sessions } from "./sessions";
 
-import { createProfile, clearProfile } from "../actions/profile";
-import { createSession, joinSession } from "../actions/session";
+import { signOut, signIn } from "../actions/current-user";
+import { createProfile } from "../actions/profiles";
+import { createSession, cancelSession, joinSession, unjoinSession } from "../actions/session";
 
 const log = debug("doppio:components:app");
 
@@ -18,27 +19,42 @@ class AppView extends Component {
 
     anonymousView() {
         let dispatch = this.props.dispatch;
-        return <SignupForm onSubmit={s => dispatch(createProfile(s))} />;
+        return (
+            <div>
+                <SignupForm onSubmit={s => dispatch(createProfile(s))} />
+                <hr />
+                <ul>
+                {
+                    this.props.profiles.map(p => {
+                        return (
+                            <li id={p.id}>
+                                <button onClick={() => dispatch(signIn(p))}>Sign in as <b>{p.name}</b></button>
+                            </li>
+                        );
+                    })
+                }
+                </ul>
+            </div>
+        );
     }
 
     signedInView() {
-        let { dispatch, profile } = this.props;
-
-        function dispatchCP() {
-            log("clear profile");
-            dispatch(clearProfile());
-        }
+        let { dispatch, currentUser } = this.props;
 
         return (
             <div>
-            <Home currentUser={this.props.profile} onSignOut={dispatchCP}/>
+            <Home currentUser={this.props.currentUser} onSignOut={() => dispatch(signOut()) }/>
 
             <hr />
                 <h2>Sessions</h2>
                 <Sessions
+                    currentUser={this.props.currentUser}
                     sessions={this.props.sessions}
-                    onJoinSession={(h) => dispatch(joinSession(h, profile))}
-                    onCreateSession={() => dispatch(createSession(profile))}
+                    profiles={this.props.profiles}
+                    onJoinSession={session => dispatch(joinSession(session, currentUser))}
+                    onUnjoinSession={session => dispatch(unjoinSession(session, currentUser))}
+                    onCreateSession={() => dispatch(createSession(currentUser))}
+                    onCancelSession={id => dispatch(cancelSession(id))}
                 />
 
             </div>
@@ -46,16 +62,18 @@ class AppView extends Component {
     }
 
     render() {
-        log("props", this.props);
-
-        const { profile } = this.props;
-        const isUserKnown = null != profile;
+        const { currentUser } = this.props;
+        const isUserKnown = null != currentUser;
 
         return isUserKnown ? this.signedInView() : this.anonymousView();
     }
 }
 
 function select(state) {
+    if (null != state.currentUser) {
+        state.currentUser = state.profiles.filter(u => u.id === state.currentUser.id).pop();
+    }
+
     return state;
 }
 
