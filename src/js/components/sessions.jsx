@@ -71,13 +71,8 @@ Sessions.propTypes = {
     onCancelSession: PropTypes.func.isRequired,
     sessions: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.string.isRequired,
-        host: PropTypes.shape({
-            email: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired
-        }).isRequired,
-        members: PropTypes.arrayOf(PropTypes.shape({
-            name: PropTypes.string.isRequired
-        }))
+        host: PropTypes.string.isRequired,
+        members: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
     })).isRequired,
     profiles: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired
