@@ -70,11 +70,14 @@ class AppView extends Component {
 }
 
 function select(state) {
-    if (null != state.currentUser) {
-        state.currentUser = state.profiles.filter(u => u.id === state.currentUser.id).pop();
-    }
-
-    return state;
+    return Object.assign(
+        {},
+        state,
+        {
+            currentUser: null != state.currentUser ? state.profiles.find(u => u.id === state.currentUser.id) : null,
+            sessions: state.sessions.filter(s => null == s.outchecker)
+        }
+    );
 }
 
 export default connect(select)(AppView);
