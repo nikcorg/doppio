@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "debug": "^2.2.0",
+    "node-uuid": "^1.4.3",
     "react": "^0.13.3",
     "react-redux": "^0.2.2",
     "redux": "^1.0.0-rc"
