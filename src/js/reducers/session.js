@@ -1,5 +1,5 @@
 import debug from "debug";
-import * as types from "../constants/ActionTypes";
+import * as types from "../constants/action-types";
 
 const log = debug("doppio:reducers:session");
 

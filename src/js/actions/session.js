@@ -1,4 +1,4 @@
-import { CREATE_SESSION, JOIN_SESSION, UNJOIN_SESSION, CHECKOUT_SESSION } from "../constants/ActionTypes";
+import { CREATE_SESSION, JOIN_SESSION, UNJOIN_SESSION, CHECKOUT_SESSION } from "../constants/action-types";
 
 export function createSession(host) {
     return {

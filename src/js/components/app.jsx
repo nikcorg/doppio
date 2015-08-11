@@ -6,8 +6,8 @@ import { Home } from "./home";
 // import { Persons } from "./persons";
 import { Sessions } from "./sessions";
 
-import { createProfile, clearProfile } from "../actions/ProfileActions";
-import { createSession, joinSession } from "../actions/SessionActions";
+import { createProfile, clearProfile } from "../actions/profile";
+import { createSession, joinSession } from "../actions/session";
 
 const log = debug("doppio:components:app");
 
