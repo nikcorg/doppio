@@ -1,6 +1,6 @@
 export const API_CALL = Symbol("API CALL");
 
-let apiCall = () => next => action => {
+export let apiCall = store => next => action => {
     if ("undefined" === typeof action[API_CALL]) {
         return next(action);
     }
