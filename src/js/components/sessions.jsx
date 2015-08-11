@@ -10,7 +10,7 @@ export class Sessions extends Component {
 
     getSessionsAsListItems() {
         const { sessions, profiles, currentUser, onJoinSession, onUnjoinSession, onCancelSession } = this.props;
-        const lookupName = id => profiles.filter(p => p.id === id).pop().name;
+        const lookupName = id => profiles.find(p => p.id === id).name;
 
         const sessionAction = s => {
             if (!s.isMember) {

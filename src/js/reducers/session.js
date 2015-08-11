@@ -21,34 +21,30 @@ export function sessions(state = [], action) {
         return state.filter(s => s.id !== action.id).concat(
             Object.assign(
                 {},
-                state.filter(s => s.id === action.id).pop(),
+                state.find(s => s.id === action.id),
                 {
-                    members: [
-                        ...state.filter((s) => s.id === action.id).pop().members,
-                        action.profile.id
-                    ]
+                    members: state.find(s => s.id === action.id).members.concat(action.profile.id)
                 }
             )
         );
 
     case types.UNJOIN_SESSION:
-        log("unjoin", action);
+        let session = state.find(s => s.id === action.id);
         let filtered = Object.assign(
             {},
-            state.filter(s => s.id === action.id).pop(),
+            session,
             {
-                members: state.filter(s => s.id === action.id).pop().members.filter(p => p !== action.profile.id)
+                members: session.members.filter(p => p !== action.profile.id)
             }
         );
 
-        log("filtered session", filtered);
         return state.filter(s => s.id !== action.id).concat(filtered);
 
     case types.CHECKOUT_SESSION:
         return state.filter(s => s.id !== action.id).concat(
             Object.assign(
                 {},
-                state.filter(s => s.id === action.id).pop(),
+                state.find(s => s.id === action.id),
                 {
                     outchecker: action.profile.id
                 }
