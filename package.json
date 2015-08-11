@@ -3,14 +3,18 @@
   "version": "0.0.0",
   "description": "doppio tracking",
   "main": "index.js",
+  "config": {
+    "browserify_transforms": "-t [ babelify --loose all --plugins object-assign ] -t envify",
+    "browserify_extensions": "--extension=.js --extension=.jsx --extension=.json"
+  },
   "scripts": {
     "test": "tape tests/*",
     "dev": "npm run build:index & npm run watch:css & npm run preview",
     "preview": "DEBUG=$([ ! -z \"$DEBUG\" ] && echo \"$DEBUG\" || echo \"doppio:*\") NODE_ENV=preview BUNDLE=\"bundle-${npm_package_version}.js\" npm run preview:server",
-    "preview:server": "./node_modules/.bin/beefy --cwd public src/js/bootstrap.js:${BUNDLE} 8080 -- --extension=.js --extension=.jsx --extension=.json -d -t [ babelify --loose all --plugins object-assign ] -t envify",
+    "preview:server": "./node_modules/.bin/beefy --cwd public src/js/bootstrap.js:${BUNDLE} 8080 -- -d $npm_package_config_browserify_extensions $npm_package_config_browserify_transforms",
     "build": "DEBUG=\"\" NODE_ENV=production npm run build:all",
     "build:all": "npm run build:css && npm run build:js && npm run build:manifest && npm run build:index",
-    "build:js": "./node_modules/.bin/browserify src/js/bootstrap.js --extension=.js --extension=.jsx --extension=.json -t [ babelify --loose all --plugins object-assign ] -t envify > public/bundle-$npm_package_version.js",
+    "build:js": "./node_modules/.bin/browserify src/js/bootstrap.js $npm_package_config_browserify_extensions $npm_package_config_browserify_transforms > public/bundle-$npm_package_version.js",
     "build:css": "./node_modules/.bin/postcss -u cssnext -o public/style-${npm_package_version}.css src/css/global.css",
     "build:manifest": "echo TODO: build manifest",
     "build:index": "sed -e \"s/__VERSION__/${npm_package_version}/\" < src/html/index.html > public/index.html",
