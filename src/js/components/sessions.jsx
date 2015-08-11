@@ -9,16 +9,48 @@ export class Sessions extends Component {
     }
 
     getSessionsAsListItems() {
-        const sessions = this.props.sessions;
+        const { sessions, profiles, currentUser, onJoinSession, onUnjoinSession, onCancelSession } = this.props;
+        const lookupName = id => profiles.filter(p => p.id === id).pop().name;
+
+        const sessionAction = s => {
+            if (!s.isMember) {
+                return (
+                    <button onClick={onJoinSession.bind(this, s.id)}>join</button>
+                );
+            } else if (!s.isHost) {
+                return (
+                    <button onClick={onUnjoinSession.bind(this, s.id)}>leave</button>
+                );
+            } else {
+                return (
+                    <button onClick={onCancelSession.bind(this, s.id)}>cancel</button>
+                );
+            }
+        };
+
+        const normalizeSession = s => {
+            return {
+                id: s.id,
+                host: lookupName(s.host),
+                members: s.members.map(lookupName),
+                isHost: s.host === currentUser.id,
+                isMember: s.members.some(m => m === currentUser.id)
+            };
+        };
+        const renderSession = s => {
+            return (
+                <li key={s.id}>
+                    {s.members.join(", ")} (Hosted by {s.host})
+                    {sessionAction(s)}
+                </li>
+            );
+        };
 
         return Object.keys(sessions).
             map(k => sessions[k]).
             filter(s => null == s.outchecker).
-            map((s, idx) => <li key={s.host.name + "-" + idx}>
-                {s.members.map(m => m.name).join(", ")} (Hosted by {s.host.name})
-                <button onClick={this.props.onJoinSession.bind(this, s.host)}>join this session</button>
-                </li>
-            );
+            map(normalizeSession).
+            map(renderSession);
     }
 
     render() {
@@ -36,7 +68,10 @@ export class Sessions extends Component {
 Sessions.propTypes = {
     onCreateSession: PropTypes.func.isRequired,
     onJoinSession: PropTypes.func.isRequired,
+    onUnjoinSession: PropTypes.func.isRequired,
+    onCancelSession: PropTypes.func.isRequired,
     sessions: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string.isRequired,
         host: PropTypes.shape({
             email: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired
@@ -44,5 +79,11 @@ Sessions.propTypes = {
         members: PropTypes.arrayOf(PropTypes.shape({
             name: PropTypes.string.isRequired
         }))
-    })).isRequired
+    })).isRequired,
+    profiles: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired
+    })).isRequired,
+    currentUser: PropTypes.shape({
+        id: PropTypes.string.isRequired
+    })
 };
