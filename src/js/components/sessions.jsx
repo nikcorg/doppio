@@ -48,7 +48,6 @@ export class Sessions extends Component {
 
         return Object.keys(sessions).
             map(k => sessions[k]).
-            filter(s => null == s.outchecker).
             map(normalizeSession).
             map(renderSession);
     }
