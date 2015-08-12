@@ -4,7 +4,7 @@
   "description": "doppio tracking",
   "main": "index.js",
   "config": {
-    "browserify_transforms": "-t [ babelify --loose all --plugins object-assign ] -t envify",
+    "browserify_transforms": "-t [ babelify --loose all --plugins object-assign --optional es7.objectRestSpread ] -t envify",
     "browserify_extensions": "--extension=.js --extension=.jsx --extension=.json"
   },
   "scripts": {
