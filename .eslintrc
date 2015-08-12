@@ -43,7 +43,7 @@
         "no-trailing-spaces": 1,
         "no-undef": 1,
         "no-unexpected-multiline": 1,
-        "no-unused-vars": 1,
+        "no-unused-vars": [1, { "vars": "local", "args": "after-used" }],
         "no-var": 1,
         "no-warning-comments": [1, {
           "terms": ["todo", "fixme"], "location": "anywhere"
